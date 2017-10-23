@@ -1,32 +1,49 @@
 //pictiures
-PImage black;
-PImage page1; 
+PImage page0;
+PImage playing;
+PImage fridge;
+PImage death;
+
 PImage clive;
-//variables:
-static int x;     // positions
-int y = 50;
+
+PImage carrot;
+PImage leg;
+PImage turnip;
+
+PImage normal;
+//-
+static int x;     //matzo positions
+int Y = 50;       //ladle position
 //dont mess with!!{{
-int Y = 250;
+int y = 210;    //matzo positions
 static int w, h;     // dimensions
 static int ww, hh;   // radii
 static int gw, gh;   // canvas - radii
 //}}
 //obstacles position
-float s = random(900);
-int d = 870;
+float Carrotx = random(700)+50;
+int Carroty = 850;
+float Lx = random(700)+50; 
+int Ly = 870;
+float Tx = random(700)+50; 
+int Ty = 800;
 //timers
 int startTime=-1;
 //page number
 int page = 0;
- 
+// white = transparent
+int i;
+int wi;
+int hi;
+//speed of object;
+float speed = 1;
 // Object's constants:
-final static byte  SPX  = 10, SPY = 10; // speed movement
+final static byte  SPX  = 1 ; // speed movement
 final static byte  BOLD = 4;            // border thickness
 final static color COLOUR = #0000FF;    // #blue
  
 // General constants:
 final static byte  FPS = 60;
-final static color BG  = #FFFF00;       // #yellow
  
 // General boolean variables:
 static boolean north, south, west, east;
@@ -45,81 +62,131 @@ static final void initVars(int wdt, int hgt) {
 }
  
 void setup() {
-   black = loadImage("black.jpg");
-   page1 = loadImage("Matzah_fall_home.jpg");
+   page0 = loadImage("Matzah_fall_home.jpg");
+   death = loadImage("Untitled_Artwork.png");
+   fridge = loadImage("The_fridge.png");   
+   playing = loadImage("g_back.png");
+   
    clive = loadImage("Clive_the_instagram_snail.jpg");
+   
+   normal = loadImage("Matzah_ball.png");
+   
+   carrot = loadImage("Carrot.png");
+   leg = loadImage("Chicken_leg.png");
+   turnip = loadImage("Radish.png");
   size(800, 800);
   smooth();            // turn on drawing smoothness
   frameRate(FPS);      // set frames / second
- 
-  rectMode(CENTER);    // coordinates are relative from center
-  ellipseMode(CENTER);
- 
+  ellipseMode(CENTER);   // coordinates are relative from center
+
+ loadPixels();
   initVars(width, height);
 }
- 
-void draw() {///////////////////////////////////////////////////////////////////////
+void draw() {//////////////////////////////////////////////////////////////////////
 if(page==0){
-   image(page1,0,0,800,800);  
-   image(clive,0,160,120,120);
+int ii = 0;
+if(ii == 0){
+image(page0,0,0,800,800);
+ii ++;
+}
+ii = 11;
 }
 if(page==1){
-background(BG);
+  page1();
 }
- if(x == 450){
-  fill(0);
- }
- if(page==3){//------------------------this is the game part of the game{
-   background(BG);
- fill(250);
-  moveObject();
-  confineToEdges();
-  displayObject();
-  fill(150);
-  rect(x,y-140,20,200);
-  ellipse(x,y,70,90);
-    //-----
-     image(black,s-75,d-75,150,150);
-  d-=10;
-  if(d<0){
-    d = 800;
-    s = random(800);
-  }
-  if(d+100>Y+5 && d-100 <Y-5 && s+100>x+5 && s-100<x-5){
-    Y-=50;
-    d=870;
-    s = random(800);
-    }
-    //------
-  if(Y<=y){ 
-    page = 5;
-  } }//-------------------------------------}game part of game
-  if(page == 5){
+ if(page==3){
+   speed+=.002;
+   page3();
+  } 
+ if(page == 4){
+   String time = ""+((millis()-startTime)/1000);
+   int xxx = 355;
+   int xofput = time.length();
+   if(xofput == 1){
+   xxx = 413;}
+   if(xofput == 2){
+   xxx = 389;}
+   if(xofput == 3){
+   xxx = 371;}
+   if(xofput == 4){
+   xxx = 355;}
+image(death,0,0,800,800);
 fill(250,0,0);
-textSize(100);
-text("Game Over ",600,200, 800, 300);
-fill(250);
-textSize(50);
-text("click to restart",670,530, 800, 300);
-textAlign(CENTER, 450);
-text("you got eaten after " +  ((millis()-startTime)/1000) + " seconds",450,450, 1000, 300);
+textSize(20);
+text(time ,xxx,410, 1000, 300);
 noLoop();
   }
 }//--------|
  void mouseClicked() {
-  println(mouseX,mouseY);
-  if(page==0 && mouseX < 593 && mouseX > 231 && mouseY < 64 ){
-    link("https://forum.processing.org/one/topic/link-opening-hundreds-of-web-pages.html");
-  }
   if(page==0 && mouseX < 775 && mouseX > 28 && mouseY < 701 && mouseY > 656){
     page = 3;
     startTime = millis();
   }
+  //to fridge
   if(page == 0 &&  mouseX < 478 && mouseX > 340 && mouseY < 794 && mouseY > 758){
   page = 1; 
   }
   println(mouseX,mouseY);  
 }/////////////////////////////////////////////////////////////////////////////
+void page1(){
+  image(fridge,0,0,800,800);
+}
+void page3(){
+ image(playing,0,0,800,800);
+ fill(250);
+ for(int ii = 0; ii <= 50; ii++){
+  moveObject();
+  confineToEdges();
+  displayObject();
+  fill(150);
+  rect(x+30,Y-200,20,200);
+  ellipse(x+40,Y,70,90);
+    //----CarrotStuff-
+     image(carrot,Carrotx-25,Carroty-32,50,75);
+  Carroty-=speed;
+  if(Carroty<0){
+    Carroty = 800;
+    Carrotx = random(700)+50;
+  }
+  if(Carrotx-25 < x+w && Carrotx+25 > x-w+100 && Carroty-32 < y+h-8 && Carroty+32 >y-h){
+    y-=50;
+    Carroty=870;
+   Carrotx = random(700)+50;
+    }
+    //------ChickenLegStuff-
+  image(leg,Lx-50,Ly-75,100,150);
+  Ly-=speed;
+  if(Ly<0){
+    Ly = 800;
+    Lx = random(800);
+  }
+  if(Lx-50 < x+w && Lx+50 > x-w+100 && Ly-75 < y+h-8 && Ly+75 >y-h){
+    y-=50;
+    Ly=870;
+    Lx = random(700)+50;
+    }
+    //-----TurnipStuff-
+        image(turnip,Tx-45,Ty-50,90,100);
+  Ty-=speed;
+  if(Ty<0){ //restart   
+     Ty = 800; 
+     Tx = random(800);
+   }
+     
+  if(Tx-45 < x+w && Tx+45 > x-w+100 && Ty-50 < y+h-8 && Ty+50 >y-h){ // contact with matzo ball
+    y-=50;
+    Ty=870;
+    Tx = random(800);
+  }
+    
+    //------
+    
+  if(y<=Y){ 
+    page = 4;
+  }
+  
+ }
+}
 void keyPressed() {
   final int k = keyCode;
    setDirection(k, true);
@@ -143,5 +210,5 @@ static final void confineToEdges() {
 }
  
 void displayObject() {
-   ellipse(x, Y, w, h);
+   image(normal,x,y,w,h);
 }
